@@ -3,11 +3,26 @@ test -x $LOCAL_ZSH -a ! /proc/$$/exe -ef $LOCAL_ZSH && exec $LOCAL_ZSH
 
 alias be="bundle exec"
 alias bs="bundle exec rspec"
+alias br="bundle exec rails"
 alias bc="bundle exec rails console"
 
 alias cdc="cd ~/work/causes"
 
 alias ssh="TERM=screen ssh"
+
+prodcon() { ssh -t $1 bash -c "prodcon ${2:-causes}" }
+
+clip() { tmux set-buffer $(readlink -f $1) }
+
+vim_pane() {
+  for pane in $(tmux list-panes -F '#{pane_pid},#{pane_id}'); do
+    if pgrep vim -P $(echo $pane | cut -d, -f1); then
+      vim_pane_id=$(echo $pane | cut -d, -f2)
+      return 0
+    fi
+  done
+  return 1
+}
 
 autoload -U colors && colors
 
